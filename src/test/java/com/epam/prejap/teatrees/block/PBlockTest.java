@@ -1,16 +1,10 @@
 package com.epam.prejap.teatrees.block;
 
-import static org.testng.Assert.*;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
 public class PBlockTest {
 
-    final byte[][] IMAGE = {
-            {1, 1},
-            {1, 1},
-            {1, 0},
-    };
     final byte[][] WRONG_IMAGE = {};
     final byte[][] WRONG_IMAGE2 = {
             {1, 1},
@@ -24,56 +18,41 @@ public class PBlockTest {
             {1, 0},
             {0, 1},
     };
-
-
-    //PBlock image1 = new PBlock(IMAGE);
-    PBlock image1 = new PBlock();
+    PBlock block = new PBlock();
 
     //HAPPY PATH
     @Test
     void checkIfNoRowsAreVoid(){
         SoftAssert softAssertion= new SoftAssert();
-        for (int i=0; i<image1.rows;i++){
-            //assertTrue(image1.rows>0);
-            //assertTrue(image1.dotAt(i,0)!=assertNotNull();
-            softAssertion.assertNotNull(image1.dotAt(i,0));
+        for (int i=0; i<block.rows;i++){
+            softAssertion.assertNotNull(block.dotAt(i,0));
         }
         softAssertion.assertAll();
     }
 
-    /*
-    public int rows() {return rows;}
-    public int cols() {
-        return cols;
-    }
-    public byte dotAt(int i, int j) { return image[i][j]; }
-     */
-
     @Test
-    void checkIfBlockFieldsContainOnlyOnesAndZeroes(){
-        for (int i=0; i<IMAGE.length; i++){
-            for (int j=0; j<IMAGE[0].length;j++) {
-                byte field = IMAGE[i][j];
-                assertTrue(field>=0 && field <=1 );
+    void checkIfBlockFieldsContainOnlyZeroesAndAtLeastOneOne(){
+        SoftAssert softAssertion= new SoftAssert();
+        boolean onePresent = false;
+        for (int i=0; i<block.rows; i++){
+            for (int j=0; j<block.cols ; j++) {
+                byte field = block.dotAt(i,j);
+                softAssertion.assertTrue(field>=0);
+                softAssertion.assertTrue(field <=1);
+                if (field==1) onePresent=true;
             }
         }
+        softAssertion.assertTrue(onePresent);
+        softAssertion.assertAll();
     }
 
     @Test
     void checkIfLengthOfEveryRowEqualsNumberOfColumns(){
-        int columns = IMAGE[0].length;
-        for (int i=0; i<IMAGE.length; i++){
-            assertEquals(IMAGE[i].length,columns);
+        SoftAssert softAssertion= new SoftAssert();
+        for (int i=0; i<block.rows; i++){
+            softAssertion.assertEquals(block.image[i].length,block.cols);
         }
-    }
-
-    @Test
-    void checkIfBlockIsRectangular(){
-        //every line should have the same length
-        int rowLength = IMAGE[0].length;
-        for (int i=0; i<IMAGE.length; i++){
-            assertEquals(IMAGE[i].length,rowLength);
-        }
+        softAssertion.assertAll();
     }
 
     //NOT SO HAPPY PATH
@@ -83,27 +62,26 @@ public class PBlockTest {
             new PBlock(WRONG_IMAGE);
         }
         catch (Exception e){
-            System.out.println(e);
             throw e;
         }
     }
+
     @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image is not a rectangle")
     void checkIfBlockThatIsNotARectangleIsCaught() {
         try {
             new PBlock(WRONG_IMAGE2);
         }
         catch (Exception e){
-            System.out.println(e);
-            throw e; //IllegalArgumentException(e);
+            throw e;
         }
     }
+
     @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid dot value")
     void checkIfWrongDotValueIsDetected() {
         try {
             new PBlock(WRONG_IMAGE3);
         }
         catch (Exception e){
-            System.out.println(e);
             throw e;
         }
     }
