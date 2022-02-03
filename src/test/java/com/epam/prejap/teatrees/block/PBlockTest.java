@@ -1,5 +1,6 @@
 package com.epam.prejap.teatrees.block;
 
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
@@ -18,9 +19,14 @@ public class PBlockTest {
             {1, 0},
             {0, 1},
     };
-    PBlock block = new PBlock();
+    private PBlock block;
 
     //HAPPY PATH
+    @BeforeMethod
+    void setup() {
+        block = new PBlock();
+    }
+
     @Test
     void checkIfNoRowsAreVoid(){
         SoftAssert softAssertion= new SoftAssert();
@@ -57,32 +63,17 @@ public class PBlockTest {
 
     //NOT SO HAPPY PATH
     @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image has height equal to 0")
-    void checkIfBlockWithZeroHeightIsCaught() {
-        try {
-            new PBlock(WRONG_IMAGE);
-        }
-        catch (Exception e){
-            throw e;
-        }
+    void checkIfBlockWithZeroHeightIsCaught() throws IllegalArgumentException{
+        new PBlock(WRONG_IMAGE);
     }
 
     @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image is not a rectangle")
-    void checkIfBlockThatIsNotARectangleIsCaught() {
-        try {
-            new PBlock(WRONG_IMAGE2);
-        }
-        catch (Exception e){
-            throw e;
-        }
+    void checkIfBlockThatIsNotARectangleIsCaught() throws IllegalArgumentException {
+        new PBlock(WRONG_IMAGE2);
     }
 
     @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid dot value")
-    void checkIfWrongDotValueIsDetected() {
-        try {
+    void checkIfWrongDotValueIsDetected() throws IllegalArgumentException {
             new PBlock(WRONG_IMAGE3);
-        }
-        catch (Exception e){
-            throw e;
-        }
     }
 }
