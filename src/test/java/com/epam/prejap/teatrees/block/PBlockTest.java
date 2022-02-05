@@ -3,22 +3,40 @@ package com.epam.prejap.teatrees.block;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
+import org.testng.annotations.DataProvider;
+import java.lang.reflect.Method;
 
+@Test(groups = "blocks")
 public class PBlockTest {
 
-    final byte[][] WRONG_IMAGE = {};
-    final byte[][] WRONG_IMAGE2 = {
-            {1, 1},
-            {1, 1},
-            {1, 0},
-            {1,}
-    };
-    final byte[][] WRONG_IMAGE3 = {
-            {1, 1},
-            {1, -1},
-            {1, 0},
-            {0, 1},
-    };
+    @DataProvider (name = "Images")
+    public Object[][] dpMethod(Method m){
+        final byte[][] EMPTY_IMAGE = {};
+        final byte[][] WRONG_IMAGE1 = {
+                {1, 1},
+                {1,}
+        };
+        final byte[][] WRONG_IMAGE2 = {
+                {1, -1},
+        };
+        switch (m.getName()){
+            case "checkIfBlockWithZeroHeightIsCaught":
+                return new Object[][]{
+                        {EMPTY_IMAGE},
+                };
+            case "checkIfBlockThatIsNotARectangleIsCaught":
+                return new Object[][]{
+                        {WRONG_IMAGE1},
+                };
+            case "checkIfWrongDotValueIsDetected":
+                return new Object[][]{
+                        {WRONG_IMAGE2},
+                };
+
+        }
+        return null;
+    }
+
     private PBlock block;
 
     //HAPPY PATH
@@ -62,18 +80,19 @@ public class PBlockTest {
     }
 
     //NOT SO HAPPY PATH
-    @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image has height equal to 0")
-    void checkIfBlockWithZeroHeightIsCaught() throws IllegalArgumentException{
-        new PBlock(WRONG_IMAGE);
+    @Test (dataProvider = "Images", expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image has height equal to 0")
+    void checkIfBlockWithZeroHeightIsCaught(byte[][] image) throws IllegalArgumentException{
+        new PBlock(image);
     }
 
-    @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image is not a rectangle")
-    void checkIfBlockThatIsNotARectangleIsCaught() throws IllegalArgumentException {
-        new PBlock(WRONG_IMAGE2);
+    @Test (dataProvider = "Images", expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image is not a rectangle")
+    void checkIfBlockThatIsNotARectangleIsCaught(byte[][] image) throws IllegalArgumentException {
+        new PBlock(image);
     }
 
-    @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid dot value")
-    void checkIfWrongDotValueIsDetected() throws IllegalArgumentException {
-            new PBlock(WRONG_IMAGE3);
+    @Test (dataProvider = "Images", expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid dot value")
+    void checkIfWrongDotValueIsDetected(byte[][] image) throws IllegalArgumentException {
+        //System.out.println(val1);
+            new PBlock(image);
     }
 }

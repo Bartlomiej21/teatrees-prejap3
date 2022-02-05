@@ -22,6 +22,7 @@
             <class name="com.epam.prejap.teatrees.game.PlayfieldTest"/>
             <class name="com.epam.prejap.teatrees.player.RandomPlayerTest"/>
             <class name="com.epam.prejap.teatrees.pause.PauseTest"/>
+            <class name="com.epam.prejap.teatrees.block.PBlockTest"/>
         </classes>
     </test>
     <test name="Integration-tests">
