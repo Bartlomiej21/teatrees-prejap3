@@ -32,7 +32,6 @@ public class PBlockTest {
                 return new Object[][]{
                         {WRONG_IMAGE2},
                 };
-
         }
         return null;
     }
@@ -92,7 +91,6 @@ public class PBlockTest {
 
     @Test (dataProvider = "Images", expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid dot value")
     void checkIfWrongDotValueIsDetected(byte[][] image) throws IllegalArgumentException {
-        //System.out.println(val1);
             new PBlock(image);
     }
 }
