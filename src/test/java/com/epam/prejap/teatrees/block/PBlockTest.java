@@ -1,5 +1,6 @@
 package com.epam.prejap.teatrees.block;
 
+import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
@@ -71,8 +72,7 @@ public class PBlockTest {
 
     @Test
     void checkIfNumberOfColumnsIsCorrect(){
-        SoftAssert softAssert = new SoftAssert();
-        softAssert.assertEquals(block.cols(),2);
+        Assert.assertEquals(block.cols(),2);
     }
 
     @Test
@@ -86,9 +86,7 @@ public class PBlockTest {
 
     @Test (dataProvider = "PCoordinates")
     void checkIfCoordinatesForPBlockAreCorrect(int row, int col, int dot){
-        SoftAssert softAssertion = new SoftAssert();
-        softAssertion.assertEquals(block.dotAt(row,col),dot);
-        softAssertion.assertAll();
+        Assert.assertEquals(block.dotAt(row,col),dot);
     }
 
     @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image has height equal to 0")
@@ -96,7 +94,8 @@ public class PBlockTest {
         new PBlock(EMPTY_IMAGE);
     }
 
-    @Test (dataProvider = "NonRectangularImage", expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image is not a rectangle")
+    @Test (dataProvider = "NonRectangularImage",
+            expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image is not a rectangle")
     void checkIfBlockThatIsNotARectangleIsCaught(byte[][] image) throws IllegalArgumentException {
         new PBlock(image);
     }
