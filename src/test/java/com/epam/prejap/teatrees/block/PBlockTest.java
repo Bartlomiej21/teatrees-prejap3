@@ -4,41 +4,41 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 import org.testng.annotations.DataProvider;
-import java.lang.reflect.Method;
 
 @Test(groups = "blocks")
 public class PBlockTest {
 
-    @DataProvider (name = "Images")
-    public Object[][] dpMethod(Method m){
-        final byte[][] EMPTY_IMAGE = {};
+    @DataProvider (name="PCoordinates")
+    public Object[][] provideCoordinates(){
+        return new Object[][]{
+                {0,0,1},
+                {0,1,1},
+                {1,0,1},
+                {1,1,1},
+                {2,0,1},
+                {2,1,0}
+        };
+    }
+
+    @DataProvider (name = "NonRectangularImage")
+    public Object[][] provideNonRectangularImage() {
         final byte[][] WRONG_IMAGE1 = {
                 {1, 1},
                 {1,}
         };
         final byte[][] WRONG_IMAGE2 = {
-                {1, -1},
+                {1},
+                {1, 1, 1}
         };
-        switch (m.getName()){
-            case "checkIfBlockWithZeroHeightIsCaught":
-                return new Object[][]{
-                        {EMPTY_IMAGE},
-                };
-            case "checkIfBlockThatIsNotARectangleIsCaught":
-                return new Object[][]{
-                        {WRONG_IMAGE1},
-                };
-            case "checkIfWrongDotValueIsDetected":
-                return new Object[][]{
-                        {WRONG_IMAGE2},
-                };
-        }
-        return null;
+        return new Object[][]{
+                {WRONG_IMAGE1},
+                {WRONG_IMAGE2}
+        };
     }
 
     private PBlock block;
+    final byte[][] EMPTY_IMAGE = {};
 
-    //HAPPY PATH
     @BeforeMethod
     void setup() {
         block = new PBlock();
@@ -70,6 +70,12 @@ public class PBlockTest {
     }
 
     @Test
+    void checkIfNumberOfColumnsIsCorrect(){
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals(block.cols(),2);
+    }
+
+    @Test
     void checkIfLengthOfEveryRowEqualsNumberOfColumns(){
         SoftAssert softAssertion= new SoftAssert();
         for (int i=0; i<block.rows; i++){
@@ -78,19 +84,20 @@ public class PBlockTest {
         softAssertion.assertAll();
     }
 
-    //NOT SO HAPPY PATH
-    @Test (dataProvider = "Images", expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image has height equal to 0")
-    void checkIfBlockWithZeroHeightIsCaught(byte[][] image) throws IllegalArgumentException{
-        new PBlock(image);
+    @Test (dataProvider = "PCoordinates")
+    void checkIfCoordinatesForPBlockAreCorrect(int row, int col, int dot){
+        SoftAssert softAssertion = new SoftAssert();
+        softAssertion.assertEquals(block.dotAt(row,col),dot);
+        softAssertion.assertAll();
     }
 
-    @Test (dataProvider = "Images", expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image is not a rectangle")
+    @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image has height equal to 0")
+    void checkIfBlockWithZeroHeightIsCaught() throws IllegalArgumentException{
+        new PBlock(EMPTY_IMAGE);
+    }
+
+    @Test (dataProvider = "NonRectangularImage", expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image is not a rectangle")
     void checkIfBlockThatIsNotARectangleIsCaught(byte[][] image) throws IllegalArgumentException {
         new PBlock(image);
-    }
-
-    @Test (dataProvider = "Images", expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Invalid dot value")
-    void checkIfWrongDotValueIsDetected(byte[][] image) throws IllegalArgumentException {
-            new PBlock(image);
     }
 }
