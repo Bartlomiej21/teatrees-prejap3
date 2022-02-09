@@ -8,7 +8,7 @@ public class BlockFeed implements BlockSupplier {
 
     private final Random rnd = new Random();
     private final List<Supplier<Block>> blocks = List.of(
-            HBlock::new, OBlock::new, ZBlock::new, SBlock::new, YBlock::new, LBlock::new
+            HBlock::new, OBlock::new, ZBlock::new, SBlock::new, YBlock::new, LBlock::new, PBlock::new
     );
 
     public BlockFeed() {
