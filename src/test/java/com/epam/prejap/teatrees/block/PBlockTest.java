@@ -1,9 +1,9 @@
 package com.epam.prejap.teatrees.block;
 
-import org.testng.Assert;
+import org.testng.asserts.SoftAssert;
+import static org.testng.Assert.*;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
-import org.testng.asserts.SoftAssert;
 import org.testng.annotations.DataProvider;
 
 @Test(groups = "blocks")
@@ -21,24 +21,7 @@ public class PBlockTest {
         };
     }
 
-    @DataProvider (name = "NonRectangularImage")
-    public Object[][] provideNonRectangularImage() {
-        final byte[][] WRONG_IMAGE1 = {
-                {1, 1},
-                {1,}
-        };
-        final byte[][] WRONG_IMAGE2 = {
-                {1},
-                {1, 1, 1}
-        };
-        return new Object[][]{
-                {WRONG_IMAGE1},
-                {WRONG_IMAGE2}
-        };
-    }
-
     private PBlock block;
-    final byte[][] EMPTY_IMAGE = {};
 
     @BeforeMethod
     void setup() {
@@ -46,8 +29,8 @@ public class PBlockTest {
     }
 
     @Test
-    void checkIfNoRowsAreVoid(){
-        SoftAssert softAssertion= new SoftAssert();
+    void shouldHaveNonEmptyRows(){
+        SoftAssert softAssertion = new SoftAssert();
         for (int i=0; i<block.rows;i++){
             softAssertion.assertNotNull(block.dotAt(i,0));
         }
@@ -55,8 +38,8 @@ public class PBlockTest {
     }
 
     @Test
-    void checkIfBlockFieldsContainOnlyZeroesAndAtLeastOneOne(){
-        SoftAssert softAssertion= new SoftAssert();
+    void shouldHaveProperDotValues(){
+        SoftAssert softAssertion = new SoftAssert();
         boolean onePresent = false;
         for (int i=0; i<block.rows; i++){
             for (int j=0; j<block.cols ; j++) {
@@ -71,32 +54,24 @@ public class PBlockTest {
     }
 
     @Test
-    void checkIfNumberOfColumnsIsCorrect(){
-        Assert.assertEquals(block.cols(),2);
+    void shouldHaveExpectedColumnsSize(){
+        assertEquals(block.cols(),2,
+                String.format("The P block should have %d columns",block.cols()));
     }
 
     @Test
-    void checkIfLengthOfEveryRowEqualsNumberOfColumns(){
-        SoftAssert softAssertion= new SoftAssert();
+    void shouldHaveProperRowSize(){
+        SoftAssert softAssertion = new SoftAssert();
         for (int i=0; i<block.rows; i++){
-            softAssertion.assertEquals(block.image[i].length,block.cols);
+            softAssertion.assertEquals(block.image[i].length,block.cols,
+                    String.format("This row should have %d dots",block.cols));
         }
         softAssertion.assertAll();
     }
 
     @Test (dataProvider = "PCoordinates")
-    void checkIfCoordinatesForPBlockAreCorrect(int row, int col, int dot){
-        Assert.assertEquals(block.dotAt(row,col),dot);
-    }
-
-    @Test (expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image has height equal to 0")
-    void checkIfBlockWithZeroHeightIsCaught() throws IllegalArgumentException{
-        new PBlock(EMPTY_IMAGE);
-    }
-
-    @Test (dataProvider = "NonRectangularImage",
-            expectedExceptions = {IllegalArgumentException.class}, expectedExceptionsMessageRegExp = "Image is not a rectangle")
-    void checkIfBlockThatIsNotARectangleIsCaught(byte[][] image) throws IllegalArgumentException {
-        new PBlock(image);
+    void shouldHaveExpectedValuesAtGivenCoordinates(int row, int col, int dot){
+        assertEquals(block.dotAt(row,col),dot,
+                String.format("The dot's value at coordinates (%d, %d) should be %d",row,col,dot));
     }
 }
